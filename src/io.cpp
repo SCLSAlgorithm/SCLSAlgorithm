@@ -5,8 +5,8 @@
 #include <time.h>
 #include <sys/timeb.h>
 #include <errno.h>
-//#include <unistd.h>
 #include <signal.h>
+
 #include "lib/lib_record.h"
 
 #define MAX_LINE_LEN 40000

@@ -2,15 +2,17 @@
 extern int demand_num;
 
 //print the related information of the graph
-void DebugPrint(GraphTopo *p_graph) {
-	for (int i = 0; i < demand_num; i++) {
-		cout << "PATH(" << i <<") ";
+void DebugPrint(GraphTopo *p_graph)
+{
+	cout << "nodeNum:" << (*p_graph).nodeNum << endl;
+	cout << "edgeNum:" << (*p_graph).edgeNum << endl;
+	for (int i = 0; i < demand_num; i++)
+	{
+		cout << "PATH(" << i << ") ";
 		cout << "source node:" << (*p_graph).nid_nindex[(*p_graph).source];
 		cout << "  destination node:"
 				<< (*p_graph).nid_nindex[(*p_graph).destination] << endl;
 	}
-	cout << "allnode:" << (*p_graph).nodeNum <<endl;
-	cout << "alledge:" << (*p_graph).edgeNum << endl;
 
 //	cout << "node_index :";
 //	for (int i = 0; i < (*p_graph).nodeNum; i++) {

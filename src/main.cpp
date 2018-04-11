@@ -4,16 +4,17 @@
 
 #include <stdio.h>
 
-int main(int argc, char *argv[]) {
+int main(int argc, char *argv[])
+{
 
 	//print_time("Experiment Beginn");
 	char *topo[MAX_EDGE_NUM];
-	int edge_num;
+	int edgeNum;
 
 	char *demand[MAX_DEMAND_NUM];
-	int demand_num;
+	int demandNum;
 	char *srlg[MAX_SRLG_NUM];
-	int srlg_num;
+	int srlgNum;
 
 	//char[] of absolute path of file
 	char *topo_file = argv[1];
@@ -24,10 +25,11 @@ int main(int argc, char *argv[]) {
 	int alg = atoi(argv[5]);
 
 	//
-	if (argc == 1) {
+	if (1 == argc)
+	{
 		string si = "0";
 		string suffix =
-				"/home/franz/franzDocuments/eclipse4cworkspace/CSLSAlgorithm/Sample/test";
+				"/home/franz/franz/franzDocuments/eclipse4cworkspace/SCLS/Sample/test";
 		string strtopo = "/topo.csv";
 		string strdemand = "/demand.csv";
 		string strsrlg = "/srlg.csv";
@@ -42,7 +44,7 @@ int main(int argc, char *argv[]) {
 //		srlg_file=argv3;
 //		result_file=argv4;
 
-		alg =0;
+		alg = 0;
 		string s1 = (suffix + si + strtopo);
 		string s2 = (suffix + si + strdemand);
 		string s3 = (suffix + si + strsrlg);
@@ -59,38 +61,42 @@ int main(int argc, char *argv[]) {
 		strcpy(result_file, s4.c_str());
 
 	}
+
 	//read topo.csv file
-	edge_num = read_file(topo, MAX_EDGE_NUM, topo_file);
-	if (edge_num == 0) {
+	edgeNum = read_file(topo, MAX_EDGE_NUM, topo_file);
+	if (edgeNum == 0)
+	{
 		printf("Please input valid topo file.\n");
 		return -1;
 	}
 
 	//read demand.csv file
-	demand_num = read_file(demand, MAX_DEMAND_NUM, demand_file);
-	if (demand_num != MAX_DEMAND_NUM) {
+	demandNum = read_file(demand, MAX_DEMAND_NUM, demand_file);
+	if (demandNum != MAX_DEMAND_NUM)
+	{
 		printf("Please input valid demand file.\n");
 		return -1;
 	}
 
 	//read srlg.csv file
-	srlg_num = read_file(srlg, MAX_SRLG_NUM, srlg_file);
-	if (srlg_num == 0) {
+	srlgNum = read_file(srlg, MAX_SRLG_NUM, srlg_file);
+	if (srlgNum == 0)
+	{
 		printf("Please input valid srlg file.\n");
 		return -1;
 	}
+
 	//begin to find disjoint paths.
-//	alg=-4;
-	cout<<"allsrlg:"<<srlg_num<<endl;
-	search_route(topo, edge_num, demand, demand_num, srlg, srlg_num, alg,
-			topo_file,srlg_file);
+	search_route(topo, edgeNum, demand, demandNum, srlg, srlgNum, alg,
+			topo_file, srlg_file);
 
 	//write disjoint paths to file.
-//	write_result(result_file);
+	//write_result(result_file);
 	//release buffer data.
-	release_buff(topo, edge_num);
-	release_buff(demand, demand_num);
-	release_buff(srlg, srlg_num);
+
+	release_buff(topo, edgeNum);
+	release_buff(demand, demandNum);
+	release_buff(srlg, srlgNum);
 
 	return 0;
 }

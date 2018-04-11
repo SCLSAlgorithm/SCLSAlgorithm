@@ -1,21 +1,27 @@
-#include "head.h"
+
 #include "lib/lib_io.h"
+
+#include "head.h"
+
 
 int edge_num;
 int demand_num;
 int srlg_num;
 
-bool judge_isStarProperty() {
+bool judge_isStarProperty()
+{
 	return true;
 }
 
-void eliminate_invalidnodeandedge() {
+void eliminate_invalidnodeandedge()
+{
 }
 
 //load the demand,topo and srlg data.
 bool LoadGraphData(GraphTopo *p_graph, char *topo[MAX_EDGE_NUM], int edgenum,
 		char *demand[MAX_DEMAND_NUM], int demandnum, char *srlg[MAX_SRLG_NUM],
-		int srlgnum) {
+		int srlgnum)
+{
 	edge_num = edgenum;
 	demand_num = demandnum;
 	srlg_num = srlgnum;
@@ -28,14 +34,18 @@ bool LoadGraphData(GraphTopo *p_graph, char *topo[MAX_EDGE_NUM], int edgenum,
 //	(*p_request).destination = (*p_graph).destination;
 
 //load the topo structure of the graph from topo.csv
-	for (int i = 0; i < edge_num; i++) {
+
+	for (int i = 0; i < edge_num; i++)
+	{
 		stringstream ss;
 		int EdgeFlag, inEdgeFlag, outEdgeflag, EdgeWeight;
 		int j = 0;
 		int_stringofint = 0;
 		int ithtopoSize = strlen(topo[i]);
-		for (; j < ithtopoSize; j++) {
-			if (!(('0' <= topo[i][j]) && ('9' >= topo[i][j]))) {
+		for (; j < ithtopoSize; j++)
+		{
+			if (!(('0' <= topo[i][j]) && ('9' >= topo[i][j])))
+			{
 				j++;
 				break;
 			}
@@ -44,8 +54,10 @@ bool LoadGraphData(GraphTopo *p_graph, char *topo[MAX_EDGE_NUM], int edgenum,
 		EdgeFlag = int_stringofint;
 
 		int_stringofint = 0;
-		for (; j < ithtopoSize; j++) {
-			if (!(('0' <= topo[i][j]) && ('9' >= topo[i][j]))) {
+		for (; j < ithtopoSize; j++)
+		{
+			if (!(('0' <= topo[i][j]) && ('9' >= topo[i][j])))
+			{
 				j++;
 				break;
 			}
@@ -55,7 +67,8 @@ bool LoadGraphData(GraphTopo *p_graph, char *topo[MAX_EDGE_NUM], int edgenum,
 		sprintf(temp, "%d", int_stringofint);
 		str = string(temp);
 
-		if (p_graph->nindex_nid.end() == p_graph->nindex_nid.find(str)) {
+		if (p_graph->nindex_nid.end() == p_graph->nindex_nid.find(str))
+		{
 
 			p_graph->nindex_nid.insert(
 					pair<string, int>(str, p_graph->nodeNum));
@@ -70,8 +83,10 @@ bool LoadGraphData(GraphTopo *p_graph, char *topo[MAX_EDGE_NUM], int edgenum,
 		inEdgeFlag = (*p_graph).nindex_nid[str];
 
 		int_stringofint = 0;
-		for (; j < ithtopoSize; j++) {
-			if (!(('0' <= topo[i][j]) && ('9' >= topo[i][j]))) {
+		for (; j < ithtopoSize; j++)
+		{
+			if (!(('0' <= topo[i][j]) && ('9' >= topo[i][j])))
+			{
 				j++;
 				break;
 			}
@@ -83,7 +98,8 @@ bool LoadGraphData(GraphTopo *p_graph, char *topo[MAX_EDGE_NUM], int edgenum,
 //		if (-1 == (*p_graph).nindex_nid[int_stringofint]) {
 //			(*p_graph).nindex_nid[int_stringofint] = (*p_graph).nodeNum;
 //			(*p_graph).nid_nindex[(*p_graph).nodeNum] = int_stringofint;
-		if (p_graph->nindex_nid.end() == p_graph->nindex_nid.find(str)) {
+		if (p_graph->nindex_nid.end() == p_graph->nindex_nid.find(str))
+		{
 			p_graph->nindex_nid.insert(
 					pair<string, int>(str, p_graph->nodeNum));
 			p_graph->nid_nindex.insert(
@@ -96,42 +112,52 @@ bool LoadGraphData(GraphTopo *p_graph, char *topo[MAX_EDGE_NUM], int edgenum,
 		int_stringofint = 0;
 
 		//for solving the bug where forgetting set edge's cost in topo.csv
-		if (j == ithtopoSize) {
+		if (j == ithtopoSize)
+		{
 			int_stringofint = 1;
 		}
 
-		for (; j < ithtopoSize; j++) {
-			if (!(('0' <= topo[i][j]) && ('9' >= topo[i][j]))) {
+		for (; j < ithtopoSize; j++)
+		{
+			if (!(('0' <= topo[i][j]) && ('9' >= topo[i][j])))
+			{
 				j++;
 				break;
 			}
 			int_stringofint = int_stringofint * 10 + (topo[i][j] - '0');
 		}
 
-		if (0 == WeightSort) {
+		if (0 == WeightSort)
+		{
 			EdgeWeight = int_stringofint;
 		}
-		if (1 == WeightSort) {
+		if (1 == WeightSort)
+		{
 			EdgeWeight = 1;
 		}
 		p_graph->AddEdges(EdgeFlag, inEdgeFlag, outEdgeflag, EdgeWeight);
 	}
 
 	//load the demanding disjoint path from demand.csv
-	for (int i = 0; i < demand_num; i++) {
+	for (int i = 0; i < demand_num; i++)
+	{
 		stringstream ss;
 		int j = 0;
 		int demandStrLen = strlen(demand[i]);
-		for (int_stringofint = 0; j < demandStrLen; j++) {
-			if (!(('0' <= demand[i][j]) && ('9' >= demand[i][j]))) {
+		for (int_stringofint = 0; j < demandStrLen; j++)
+		{
+			if (!(('0' <= demand[i][j]) && ('9' >= demand[i][j])))
+			{
 				j++;
 				break;
 			}
 			int_stringofint = int_stringofint * 10 + (demand[i][j] - '0');
 		}
 
-		for (int_stringofint = 0; j < demandStrLen; j++) {
-			if (!(('0' <= demand[i][j]) && ('9' >= demand[i][j]))) {
+		for (int_stringofint = 0; j < demandStrLen; j++)
+		{
+			if (!(('0' <= demand[i][j]) && ('9' >= demand[i][j])))
+			{
 				j++;
 				break;
 			}
@@ -142,8 +168,10 @@ bool LoadGraphData(GraphTopo *p_graph, char *topo[MAX_EDGE_NUM], int edgenum,
 
 		(*p_graph).source = int_stringofint;
 
-		for (int_stringofint = 0; j < demandStrLen; j++) {
-			if (!(('0' <= demand[i][j]) && ('9' >= demand[i][j]))) {
+		for (int_stringofint = 0; j < demandStrLen; j++)
+		{
+			if (!(('0' <= demand[i][j]) && ('9' >= demand[i][j])))
+			{
 				j++;
 				break;
 			}
@@ -158,34 +186,46 @@ bool LoadGraphData(GraphTopo *p_graph, char *topo[MAX_EDGE_NUM], int edgenum,
 		sprintf(temp, "%d", (*p_graph).source);
 		str = string(temp);
 
-		if (p_graph->nindex_nid.end() == p_graph->nindex_nid.find(str)) {
+		if (p_graph->nindex_nid.end() == p_graph->nindex_nid.find(str))
+		{
 			return false; //if source no exist in the edges.return false;
-		} else {
+		}
+		else
+		{
 			(*p_graph).source = (*p_graph).nindex_nid[str];
 		}
 		sprintf(temp, "%d", (*p_graph).destination);
 		str = string(temp);
 
-		if (p_graph->nindex_nid.end() == p_graph->nindex_nid.find(str)) {
+		if (p_graph->nindex_nid.end() == p_graph->nindex_nid.find(str))
+		{
 			return false; //if destination no exist in the edges.return false;
-		} else {
+		}
+		else
+		{
 			(*p_graph).destination = (*p_graph).nindex_nid[str];
 		}
 	}
 
-	if (isUndirectedGraph) {
+	if (isUndirectedGraph)
+	{
 		unsigned int edge = p_graph->edgeNum;
-		for (unsigned i = 0; i < edge; i++) {
+		for (unsigned i = 0; i < edge; i++)
+		{
 			EdgeClass fe = p_graph->getithEdge(i);
 			p_graph->getithEdge(i).revedgeid = p_graph->edgeNum;
-			EdgeClass re(fe.to, fe.from, fe.cost, fe.id, p_graph->edgeNum, 1, -1, i);
+			EdgeClass re(fe.to, fe.from, fe.cost, fe.id, p_graph->edgeNum, 1,
+					-1, i);
 			p_graph->AddEdges(re);
 			p_graph->edgeNum++;
 		}
 
 	}
+
+	int srlg_edge_num = 0;
 	//load the srlg structure from srlg.csv
-	for (int i = 0; i < srlg_num; i++) {
+	for (int i = 0; i < srlg_num; i++)
+	{
 		//int group;
 		int member;
 		int res;
@@ -193,8 +233,10 @@ bool LoadGraphData(GraphTopo *p_graph, char *topo[MAX_EDGE_NUM], int edgenum,
 		int_stringofint = 0;
 		int ithsrlgSize = strlen(srlg[i]);
 
-		for (; j < ithsrlgSize; j++) {
-			if (!(('0' <= srlg[i][j]) && ('9' >= srlg[i][j]))) {
+		for (; j < ithsrlgSize; j++)
+		{
+			if (!(('0' <= srlg[i][j]) && ('9' >= srlg[i][j])))
+			{
 				j++;
 				break;
 			}
@@ -204,19 +246,26 @@ bool LoadGraphData(GraphTopo *p_graph, char *topo[MAX_EDGE_NUM], int edgenum,
 
 		bool havanum = false;
 		SrlgMember srlgmem; //= new srlgMembers();
-		for (int_stringofint = 0; j <= ithsrlgSize; j++) {
+		for (int_stringofint = 0; j <= ithsrlgSize; j++)
+		{
 			if ((!(('0' <= srlg[i][j]) && ('9' >= srlg[i][j])) && havanum)
-					|| ((j == (ithsrlgSize)) && havanum)) {
+					|| ((j == (ithsrlgSize)) && havanum))
+			{
 				member = int_stringofint;
+				srlg_edge_num++;
 				srlgmem.srlgMember.push_back(member);
-				if (isUndirectedGraph) {
+				if (isUndirectedGraph)
+				{
 					res = p_graph->getithEdge(member).revedgeid;
 					srlgmem.srlgMember.push_back(res);
 				}
 				int_stringofint = 0;
 				havanum = false;
-			} else {
-				if (('0' <= srlg[i][j]) && ('9' >= srlg[i][j])) {
+			}
+			else
+			{
+				if (('0' <= srlg[i][j]) && ('9' >= srlg[i][j]))
+				{
 					havanum = true;
 					int_stringofint = int_stringofint * 10 + (srlg[i][j] - '0');
 				}
@@ -225,6 +274,11 @@ bool LoadGraphData(GraphTopo *p_graph, char *topo[MAX_EDGE_NUM], int edgenum,
 		srlgmem.srlgMembersNum = srlgmem.srlgMember.size();
 		(*p_graph).srlgGroups.push_back(srlgmem);
 	}
+
+	cout << "srlgNum:" << srlg_num << endl;
+	printf("srlgEdgeNum:%d\n", srlg_edge_num);
+	printf("srlg2edge:%.2lf\n", (100.0*srlg_edge_num/(p_graph->edgeNum)));
+
 	(*p_graph).srlgGroupsNum = srlg_num;
 
 	p_graph->TransformedToEdgeBelongingOnlySRLG();

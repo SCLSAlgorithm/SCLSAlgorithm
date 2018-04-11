@@ -8,17 +8,22 @@ using namespace std;
 
 extern DisjointPathPair *AlgorithmResult;
 
-void RecordResult(GraphTopo *p_graph, vector<bool>&APpath, vector<bool>&BPpath) {
+void RecordResult(GraphTopo *p_graph, vector<bool>&APpath, vector<bool>&BPpath)
+{
 	AlgorithmResult->APcostsum = 0;
 	AlgorithmResult->BPcostsum = 0;
 	int state = p_graph->source;
 
-	while (state != p_graph->destination) {
+	while (state != p_graph->destination)
+	{
 		for (unsigned int j = 0;
 				j < p_graph->ftopo_r_Node_c_EdgeList.at(state).edgeList.size();
-				j++) {
-			int iedge = p_graph->ftopo_r_Node_c_EdgeList.at(state).edgeList.at(j);
-			if (APpath[iedge]) {
+				j++)
+		{
+			int iedge = p_graph->ftopo_r_Node_c_EdgeList.at(state).edgeList.at(
+					j);
+			if (APpath[iedge])
+			{
 				state = p_graph->getithEdge(iedge).to;
 				AlgorithmResult->APedge.push_back(iedge);
 				AlgorithmResult->APcostsum += p_graph->getithEdge(iedge).cost;
@@ -26,15 +31,19 @@ void RecordResult(GraphTopo *p_graph, vector<bool>&APpath, vector<bool>&BPpath) 
 			}
 		}
 	}
-	AlgorithmResult->APhop = AlgorithmResult->APedge.size()+1 ;
+	AlgorithmResult->APhop = AlgorithmResult->APedge.size() + 1;
 	state = p_graph->source;
 
-	while (state != p_graph->destination) {
+	while (state != p_graph->destination)
+	{
 		for (unsigned int j = 0;
 				j < p_graph->ftopo_r_Node_c_EdgeList.at(state).edgeList.size();
-				j++) {
-			int iedge = p_graph->ftopo_r_Node_c_EdgeList.at(state).edgeList.at(j);
-			if (BPpath[iedge]) {
+				j++)
+		{
+			int iedge = p_graph->ftopo_r_Node_c_EdgeList.at(state).edgeList.at(
+					j);
+			if (BPpath[iedge])
+			{
 				state = p_graph->getithEdge(iedge).to;
 				AlgorithmResult->BPedge.push_back(iedge);
 				AlgorithmResult->BPcostsum += p_graph->getithEdge(iedge).cost;
@@ -43,8 +52,8 @@ void RecordResult(GraphTopo *p_graph, vector<bool>&APpath, vector<bool>&BPpath) 
 		}
 	}
 
-	AlgorithmResult->BPhop = AlgorithmResult->BPedge.size()+1 ;
-	AlgorithmResult->SolutionNotFeasible=false;
+	AlgorithmResult->BPhop = AlgorithmResult->BPedge.size() + 1;
+	AlgorithmResult->SolutionNotFeasible = false;
 }
 
 //bool ILPAlgorithm_glpk(Graph *p_graph) {
@@ -299,13 +308,15 @@ void RecordResult(GraphTopo *p_graph, vector<bool>&APpath, vector<bool>&BPpath) 
 //		return true;
 //}
 
-bool IQPAlgorithm_gurobi(GraphTopo *p_graph, int type) {
-	try {
+bool IQPAlgorithm_gurobi(GraphTopo *p_graph, int type)
+{
+	try
+	{
 		GRBEnv env = GRBEnv();
 		GRBModel model = GRBModel(env);
 		model.getEnv().set(GRB_IntParam_OutputFlag, 0);
 		model.getEnv().set(GRB_DoubleParam_TimeLimit, LimitedTime);
-		model.getEnv().set(GRB_IntParam_Threads,ThreadNum);
+		model.getEnv().set(GRB_IntParam_Threads, ThreadNum);
 		// Create variables
 		vector<GRBVar> APe = vector<GRBVar>((p_graph->edgeNum));
 		vector<GRBVar> BPe = vector<GRBVar>((p_graph->edgeNum));
@@ -313,13 +324,15 @@ bool IQPAlgorithm_gurobi(GraphTopo *p_graph, int type) {
 		string str;
 
 		str = "AP";
-		for (unsigned int i = 0; i < p_graph->edgeNum; i++) {
+		for (unsigned int i = 0; i < p_graph->edgeNum; i++)
+		{
 			sprintf(s, "%d", i);
 			APe.at(i) = model.addVar(0.0, 1.0, 0.0, GRB_BINARY, (str + s));
 
 		}
 		str = "BP";
-		for (unsigned int i = 0; i < p_graph->edgeNum; i++) {
+		for (unsigned int i = 0; i < p_graph->edgeNum; i++)
+		{
 			sprintf(s, "%d", i);
 			BPe.at(i) = model.addVar(0.0, 1.0, 0.0, GRB_BINARY, (str + s));
 
@@ -330,15 +343,19 @@ bool IQPAlgorithm_gurobi(GraphTopo *p_graph, int type) {
 		model.update();
 
 		GRBLinExpr obj = 0.0;
-		if (type == algorithm_IQP) {
-			for (unsigned int i = 0; i < p_graph->edgeNum; i++) {
+		if (type == algorithm_IQP)
+		{
+			for (unsigned int i = 0; i < p_graph->edgeNum; i++)
+			{
 				obj += (p_graph->getithEdge(i).cost * APe.at(i));
 
 			}
 		}
 
-		if (type == algorithm_IQP_sum) {
-			for (unsigned int i = 0; i < p_graph->edgeNum; i++) {
+		if (type == algorithm_IQP_sum)
+		{
+			for (unsigned int i = 0; i < p_graph->edgeNum; i++)
+			{
 				obj += (p_graph->getithEdge(i).cost * APe.at(i));
 				obj += (p_graph->getithEdge(i).cost * BPe.at(i));
 
@@ -349,10 +366,12 @@ bool IQPAlgorithm_gurobi(GraphTopo *p_graph, int type) {
 
 		string strc;
 		strc = "APconnect";
-		for (unsigned int i = 0; i < p_graph->nodeNum; i++) {
+		for (unsigned int i = 0; i < p_graph->nodeNum; i++)
+		{
 			sprintf(s, "%d", i);
 			GRBLinExpr con = 0.0;
-			for (unsigned int j = 0; j < p_graph->edgeNum; j++) {
+			for (unsigned int j = 0; j < p_graph->edgeNum; j++)
+			{
 				if (i == p_graph->getithEdge(j).from)
 					con += APe.at(j);
 				if (i == p_graph->getithEdge(j).to)
@@ -368,10 +387,12 @@ bool IQPAlgorithm_gurobi(GraphTopo *p_graph, int type) {
 		}
 
 		strc = "BPconnect";
-		for (unsigned int i = 0; i < p_graph->nodeNum; i++) {
+		for (unsigned int i = 0; i < p_graph->nodeNum; i++)
+		{
 			sprintf(s, "%d", i);
 			GRBLinExpr con = 0.0;
-			for (unsigned int j = 0; j < p_graph->edgeNum; j++) {
+			for (unsigned int j = 0; j < p_graph->edgeNum; j++)
+			{
 				if (i == p_graph->getithEdge(j).from)
 					con += BPe.at(j);
 				if (i == p_graph->getithEdge(j).to)
@@ -387,7 +408,8 @@ bool IQPAlgorithm_gurobi(GraphTopo *p_graph, int type) {
 		}
 
 		strc = "EdgeDisjoint";
-		for (unsigned int i = 0; i < p_graph->edgeNum; i++) {
+		for (unsigned int i = 0; i < p_graph->edgeNum; i++)
+		{
 			sprintf(s, "%d", i);
 			GRBLinExpr con = 0.0;
 			con += (BPe.at(i) + APe.at(i));
@@ -395,15 +417,18 @@ bool IQPAlgorithm_gurobi(GraphTopo *p_graph, int type) {
 		}
 
 		strc = "SrlgDisjoint";
-		for (int i = 0; i < p_graph->srlgGroupsNum; i++) {
+		for (int i = 0; i < p_graph->srlgGroupsNum; i++)
+		{
 			sprintf(s, "%d", i);
 			GRBLinExpr APcon = 0.0;
-			for (unsigned j = 0; j < APe.size(); j++) {
+			for (unsigned j = 0; j < APe.size(); j++)
+			{
 				if (i == p_graph->getithEdge(j).ithsrlg)
 					APcon += APe.at(j);
 			}
 			GRBLinExpr BPcon = 0.0;
-			for (unsigned j = 0; j < BPe.size(); j++) {
+			for (unsigned j = 0; j < BPe.size(); j++)
+			{
 				if (i == p_graph->getithEdge(j).ithsrlg)
 					BPcon += BPe.at(j);
 			}
@@ -416,19 +441,25 @@ bool IQPAlgorithm_gurobi(GraphTopo *p_graph, int type) {
 
 		int optimstatus = model.get(GRB_IntAttr_Status);
 
-		if (optimstatus != GRB_OPTIMAL) {
+		if (optimstatus != GRB_OPTIMAL)
+		{
 			return false;
 		}
 		bool SolutionIsInteger = true;
 
-		for (unsigned i = 0; i < APe.size(); i++) {
-			if (APe.at(i).get(GRB_DoubleAttr_X)) {
-				if (APe.at(i).get(GRB_DoubleAttr_X) != 1.0) {
+		for (unsigned i = 0; i < APe.size(); i++)
+		{
+			if (APe.at(i).get(GRB_DoubleAttr_X))
+			{
+				if (APe.at(i).get(GRB_DoubleAttr_X) != 1.0)
+				{
 					SolutionIsInteger = false;
 				}
 			}
-			if (BPe.at(i).get(GRB_DoubleAttr_X)) {
-				if (BPe.at(i).get(GRB_DoubleAttr_X) != 1.0) {
+			if (BPe.at(i).get(GRB_DoubleAttr_X))
+			{
+				if (BPe.at(i).get(GRB_DoubleAttr_X) != 1.0)
+				{
 					SolutionIsInteger = false;
 				}
 			}
@@ -437,14 +468,18 @@ bool IQPAlgorithm_gurobi(GraphTopo *p_graph, int type) {
 			return false;
 
 		vector<bool> apvis = vector<bool>(p_graph->edgeNum, false);
-		for (unsigned i = 0; i < APe.size(); i++) {
-			if (APe.at(i).get(GRB_DoubleAttr_X)) {
+		for (unsigned i = 0; i < APe.size(); i++)
+		{
+			if (APe.at(i).get(GRB_DoubleAttr_X))
+			{
 				apvis[i] = true;
 			}
 		}
 		vector<bool> bpvis = vector<bool>(p_graph->edgeNum, false);
-		for (unsigned i = 0; i < BPe.size(); i++) {
-			if (BPe.at(i).get(GRB_DoubleAttr_X)) {
+		for (unsigned i = 0; i < BPe.size(); i++)
+		{
+			if (BPe.at(i).get(GRB_DoubleAttr_X))
+			{
 				bpvis[i] = true;
 			}
 		}
@@ -455,17 +490,21 @@ bool IQPAlgorithm_gurobi(GraphTopo *p_graph, int type) {
 		else
 			return true;
 
-	} catch (GRBException e) {
+	} catch (GRBException e)
+	{
 		cout << "Error code = " << e.getErrorCode() << endl;
 		cout << e.getMessage() << endl;
-	} catch (...) {
+	} catch (...)
+	{
 		cout << "Exception during optimization" << endl;
 	}
 	return false;
 }
 
-bool ILPAlgorithm_gurobi(GraphTopo *p_graph, int type) {
-	try {
+bool ILPAlgorithm_gurobi(GraphTopo *p_graph, int type)
+{
+	try
+	{
 
 		GRBEnv env = GRBEnv();
 		GRBModel model = GRBModel(env);
@@ -480,13 +519,15 @@ bool ILPAlgorithm_gurobi(GraphTopo *p_graph, int type) {
 		string str;
 
 		str = "AP";
-		for (unsigned int i = 0; i < p_graph->edgeNum; i++) {
+		for (unsigned int i = 0; i < p_graph->edgeNum; i++)
+		{
 			sprintf(s1, "%d", i);
 			APe.at(i) = model.addVar(0.0, 1.0, 0.0, GRB_BINARY, (str + s1));
 
 		}
 		str = "BP";
-		for (unsigned int i = 0; i < p_graph->edgeNum; i++) {
+		for (unsigned int i = 0; i < p_graph->edgeNum; i++)
+		{
 			sprintf(s1, "%d", i);
 			BPe.at(i) = model.addVar(0.0, 1.0, 0.0, GRB_BINARY, (str + s1));
 
@@ -498,15 +539,19 @@ bool ILPAlgorithm_gurobi(GraphTopo *p_graph, int type) {
 
 		GRBLinExpr obj = 0.0;
 
-		if (type == algorithm_ILP) {
-			for (unsigned int i = 0; i < p_graph->edgeNum; i++) {
+		if (type == algorithm_ILP)
+		{
+			for (unsigned int i = 0; i < p_graph->edgeNum; i++)
+			{
 				obj += (p_graph->getithEdge(i).cost * APe.at(i));
 
 			}
 		}
 
-		if (type == algorithm_ILP_sum) {
-			for (unsigned int i = 0; i < p_graph->edgeNum; i++) {
+		if (type == algorithm_ILP_sum)
+		{
+			for (unsigned int i = 0; i < p_graph->edgeNum; i++)
+			{
 				obj += (p_graph->getithEdge(i).cost * APe.at(i));
 				obj += (p_graph->getithEdge(i).cost * BPe.at(i));
 
@@ -517,10 +562,12 @@ bool ILPAlgorithm_gurobi(GraphTopo *p_graph, int type) {
 
 		string strc;
 		strc = "APconnect";
-		for (unsigned int i = 0; i < p_graph->nodeNum; i++) {
+		for (unsigned int i = 0; i < p_graph->nodeNum; i++)
+		{
 			sprintf(s1, "%d", i);
 			GRBLinExpr con = 0.0;
-			for (unsigned int j = 0; j < p_graph->edgeNum; j++) {
+			for (unsigned int j = 0; j < p_graph->edgeNum; j++)
+			{
 				if (i == p_graph->getithEdge(j).from)
 					con += APe.at(j);
 				if (i == p_graph->getithEdge(j).to)
@@ -536,10 +583,12 @@ bool ILPAlgorithm_gurobi(GraphTopo *p_graph, int type) {
 		}
 
 		strc = "BPconnect";
-		for (unsigned int i = 0; i < p_graph->nodeNum; i++) {
+		for (unsigned int i = 0; i < p_graph->nodeNum; i++)
+		{
 			sprintf(s1, "%d", i);
 			GRBLinExpr con = 0.0;
-			for (unsigned int j = 0; j < p_graph->edgeNum; j++) {
+			for (unsigned int j = 0; j < p_graph->edgeNum; j++)
+			{
 				if (i == p_graph->getithEdge(j).from)
 					con += BPe.at(j);
 				if (i == p_graph->getithEdge(j).to)
@@ -555,7 +604,8 @@ bool ILPAlgorithm_gurobi(GraphTopo *p_graph, int type) {
 		}
 
 		strc = "EdgeDisjoint";
-		for (unsigned int i = 0; i < p_graph->edgeNum; i++) {
+		for (unsigned int i = 0; i < p_graph->edgeNum; i++)
+		{
 			sprintf(s1, "%d", i);
 			GRBLinExpr con = 0.0;
 			con += (BPe.at(i) + APe.at(i));
@@ -563,12 +613,15 @@ bool ILPAlgorithm_gurobi(GraphTopo *p_graph, int type) {
 		}
 
 		strc = "SrlgDisjoint";
-		for (int i = 0; i < p_graph->srlgGroupsNum; i++) {
+		for (int i = 0; i < p_graph->srlgGroupsNum; i++)
+		{
 			for (unsigned j = 0;
-					j < p_graph->srlgGroups.at(i).srlgMember.size(); j++) {
+					j < p_graph->srlgGroups.at(i).srlgMember.size(); j++)
+			{
 				for (unsigned k = 0;
-						k < p_graph->srlgGroups.at(i).srlgMember.size(); k++) {
-					if(j==k)
+						k < p_graph->srlgGroups.at(i).srlgMember.size(); k++)
+				{
+					if (j == k)
 						continue;
 					sprintf(s1, "%d", j);
 					sprintf(s2, "%d", k);
@@ -587,20 +640,26 @@ bool ILPAlgorithm_gurobi(GraphTopo *p_graph, int type) {
 
 		int optimstatus = model.get(GRB_IntAttr_Status);
 
-		if (optimstatus != GRB_OPTIMAL) {
+		if (optimstatus != GRB_OPTIMAL)
+		{
 			return false;
 		}
 
 		bool SolutionIsInteger = true;
 
-		for (unsigned i = 0; i < APe.size(); i++) {
-			if (APe.at(i).get(GRB_DoubleAttr_X)) {
-				if (APe.at(i).get(GRB_DoubleAttr_X) != 1.0) {
+		for (unsigned i = 0; i < APe.size(); i++)
+		{
+			if (APe.at(i).get(GRB_DoubleAttr_X))
+			{
+				if (APe.at(i).get(GRB_DoubleAttr_X) != 1.0)
+				{
 					SolutionIsInteger = false;
 				}
 			}
-			if (BPe.at(i).get(GRB_DoubleAttr_X)) {
-				if (BPe.at(i).get(GRB_DoubleAttr_X) != 1.0) {
+			if (BPe.at(i).get(GRB_DoubleAttr_X))
+			{
+				if (BPe.at(i).get(GRB_DoubleAttr_X) != 1.0)
+				{
 					SolutionIsInteger = false;
 				}
 			}
@@ -609,14 +668,18 @@ bool ILPAlgorithm_gurobi(GraphTopo *p_graph, int type) {
 			return false;
 
 		vector<bool> apvis = vector<bool>(p_graph->edgeNum, false);
-		for (unsigned i = 0; i < APe.size(); i++) {
-			if (APe.at(i).get(GRB_DoubleAttr_X)) {
+		for (unsigned i = 0; i < APe.size(); i++)
+		{
+			if (APe.at(i).get(GRB_DoubleAttr_X))
+			{
 				apvis[i] = true;
 			}
 		}
 		vector<bool> bpvis = vector<bool>(p_graph->edgeNum, false);
-		for (unsigned i = 0; i < BPe.size(); i++) {
-			if (BPe.at(i).get(GRB_DoubleAttr_X)) {
+		for (unsigned i = 0; i < BPe.size(); i++)
+		{
+			if (BPe.at(i).get(GRB_DoubleAttr_X))
+			{
 				bpvis[i] = true;
 			}
 		}
@@ -627,10 +690,12 @@ bool ILPAlgorithm_gurobi(GraphTopo *p_graph, int type) {
 		else
 			return true;
 
-	} catch (GRBException e) {
+	} catch (GRBException e)
+	{
 		cout << "Error code = " << e.getErrorCode() << endl;
 		cout << e.getMessage() << endl;
-	} catch (...) {
+	} catch (...)
+	{
 		cout << "Exception during optimization" << endl;
 	}
 	return false;
